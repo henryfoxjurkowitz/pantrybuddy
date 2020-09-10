@@ -8,12 +8,14 @@
 
 import SwiftUI
 
+// View that displays the stars for a recipe given the recipes numerical rating
 struct Stars: View {
     var rating: String
     
     var body: some View {
         HStack {
-            if (rating == "0.0") {Image(systemName: "star")} // this only happens if there's no reviews
+            // Horizontally adds a filled star if it has that star, otherwise empty
+            if (rating == "0.0") {Image(systemName: "star")}
             else {Image(systemName: "star.fill")}
             if (rating >= "1.75") {Image(systemName: "star.fill") }
             else if (rating >= "1.25") {Image(systemName: "star.lefthalf.fill") }

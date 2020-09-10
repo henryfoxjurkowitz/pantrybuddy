@@ -8,9 +8,11 @@
 
 import SwiftUI
 
+
+// View that displays all items that are in the user's pantry
 struct PantryItemsView: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(entity: Food.entity(), sortDescriptors: []) var foods: FetchedResults<Food>
+    @FetchRequest(entity: Food.entity(), sortDescriptors: []) var foods: FetchedResults<Food> // Gets list of Foods from core data
     
     var body: some View {
         VStack {
@@ -18,8 +20,8 @@ struct PantryItemsView: View {
                 HStack {
                     Text(food.name ?? "Unknown")
                     Spacer()
-                    Image(systemName: "minus.circle").onTapGesture {
-                        food.priority = 0 // deletes the food from pantry
+                    Image(systemName: "minus.circle").onTapGesture { // Delete the food from pantry by setting priority to 0
+                        food.priority = 0
                         try? self.moc.save()
                     }
                 }
@@ -31,7 +33,8 @@ struct PantryItemsView: View {
             .padding(.horizontal,5)
             .shadow(radius: 5)
             
-            if foods.filter({$0.priority > 0}).isEmpty { // no foods are in the paantry
+            // Display placeholder image and text if no foods are in the pantry
+            if foods.filter({$0.priority > 0}).isEmpty {
                 VStack {
                     Image(systemName: "cart")
                         .font(.system(size: 80))

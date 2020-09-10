@@ -8,6 +8,7 @@
 
 import Foundation
 
+// Custom struct of a Recipe to display, modify, and search for recipes
 struct Recipe: Codable, Identifiable {
     let title: String
     let rating: String

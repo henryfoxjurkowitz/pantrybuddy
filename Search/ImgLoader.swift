@@ -9,19 +9,21 @@
 import SwiftUI
 import Combine
 
+// Used to load in images for RecipePage views
 class ImageLoader: ObservableObject {
-    @Published var image: UIImage?
-    private let url: URL
-    private var cancellable: AnyCancellable?
+    @Published var image: UIImage?              // The UIImage that the class will publish
+    private let url: URL                        // The url of the image
+    private var cancellable: AnyCancellable?    // Allows the image loading to cancel when view dissapears
 
     init(url: URL) {
         self.url = url
     }
     
     deinit {
-           cancellable?.cancel()
+        cancellable?.cancel()
     }
     
+    // Loads the image
     func load() {
         cancellable = URLSession.shared.dataTaskPublisher(for: url)
         .map { UIImage(data: $0.data) }
@@ -30,14 +32,16 @@ class ImageLoader: ObservableObject {
         .assign(to: \.image, on: self)
     }
 
+    // Function to cancel the image loading
     func cancel() {
         cancellable?.cancel()
     }
 }
 
+// Asynchronously loads image
 struct AsyncImage<Placeholder: View>: View {
-    @ObservedObject private var loader: ImageLoader
-    private let placeholder: Placeholder?
+    @ObservedObject private var loader: ImageLoader  // Pass in the ImageLoader
+    private let placeholder: Placeholder?            // Placeholder for the image
     
     init(url: URL, placeholder: Placeholder? = nil) {
         loader = ImageLoader(url: url)
@@ -52,6 +56,7 @@ struct AsyncImage<Placeholder: View>: View {
     
     private var image: some View {
         Group {
+            // Sets the image if it successfully loads, otherwise sets placeholder
             if loader.image != nil {
                 Image(uiImage: loader.image!)
                     .resizable()
@@ -63,7 +68,7 @@ struct AsyncImage<Placeholder: View>: View {
     }
 }
 
-
+// The struct to actually display the image
 struct ImgLoader: View {
     let urlString: String
     var body: some View {
@@ -72,7 +77,7 @@ struct ImgLoader: View {
         return AsyncImage(
             url: url,
             placeholder: Text(" ")
-        ).aspectRatio(contentMode: .fit)
+        ).aspectRatio(contentMode: .fit) // lets the image scale to fit
 
     }
 }

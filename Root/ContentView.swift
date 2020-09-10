@@ -18,6 +18,7 @@ struct ContentView: View {
     }
  
     var body: some View {
+        // sets up the app's four tabs
         TabView(selection: $selection){
             PantryTab()
             .tabItem {
@@ -37,8 +38,9 @@ struct ContentView: View {
                 Text("Saved")
             }
             .tag(2)
-        }.background(Color(red: 0.52, green: 0.93, blue: 0.7).edgesIgnoringSafeArea(.all)) // make background green when switching tabs
-        .accentColor(Color(red: 0.4, green: 0.69, blue: 0.54))
+        }.background(Color(red: 0.52, green: 0.93, blue: 0.7)  // make background green when switching tabs
+            .edgesIgnoringSafeArea(.all))
+        .accentColor(Color(red: 0.4, green: 0.69, blue: 0.54)) // sets app accent color to darker green
     }
 }
 

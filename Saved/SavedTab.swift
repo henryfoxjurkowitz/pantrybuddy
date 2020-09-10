@@ -8,10 +8,12 @@
 
 import SwiftUI
 
+// Tab where the user can edit and access recipes or custom ingredients that they've saved
 struct SavedTab: View {
     var body: some View {
         NavigationView{
             VStack(spacing: 30) {
+                // Link to view their saved recipes
                 NavigationLink(destination: SavedRecipes()) {
                     HStack {
                         Image(systemName: "bookmark.fill").padding(.trailing)
@@ -24,6 +26,7 @@ struct SavedTab: View {
                     .shadow(radius: 5)
                     .padding([.horizontal,.top])
                 }
+                // Link to view their saved custom foods
                 NavigationLink(destination: CustomFoods()) {
                     HStack {
                         Image(systemName: "cart").padding(.trailing)
@@ -38,6 +41,7 @@ struct SavedTab: View {
                 }
                 Spacer()
                 
+                // Image and text explaining how to use the tab
                 VStack {
                     Image(systemName: "bookmark")
                         .font(.system(size: 80))
@@ -49,7 +53,7 @@ struct SavedTab: View {
                 .padding(.bottom,130)
                 Spacer()
             }
-            .navigationBarTitle("My Account")
+            .navigationBarTitle("My Account")  // Displays a title at the top of the page
             .foregroundColor(.gray)
             .background(Color(red: 0.52, green: 0.93, blue: 0.7)
                     .edgesIgnoringSafeArea(.all))

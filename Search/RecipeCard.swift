@@ -9,28 +9,30 @@
 import SwiftUI
 import SafariServices
 
+// Compact recipe card to display in search results
 struct RecipeCard: View {
-    let recipe: Recipe
-    let showDivider: Bool // adds a black line to separate cards in search tab
-    @State var showSafari = false
+    let recipe: Recipe              // The Recipe object for the RecipeCard to display
+    let showDivider: Bool           // Adds a black line to separate cards in search tab, doesn't add a black line on last result
+    @State var showSafari = false   // Allows the link in the RecipeCard to directly open Safari links
     
+    // Gets all saved recipes from core data to check whether recipes are already saved
     @Environment(\.managedObjectContext) var moc
     @FetchRequest(entity: SavedRecipe.entity(), sortDescriptors: []) var recipes: FetchedResults<SavedRecipe>
     
     var body: some View {
         let title = recipe.title
         var rating = recipe.rating
-        if rating > "5.1" {rating = "0.0"} // means rating is really "none"
+        if rating > "5.1" {rating = "0.0"}    // means rating is "none" in JSON file, set to 0
         let reviews = recipe.reviews
         let url = recipe.url
         let img = recipe.img
-        let ings = recipe.ingredientList.joined(separator: "!") //chose a charcter that won't be in ingredient lists, is only used to store list as a string for core data
+        let ings = recipe.ingredientList.joined(separator: "!") // Core data can't store an array of ingredients, so they are joined using an "!", which won't be in any ingredients, allowing them to later be split by the "!"
         
         return VStack {
             HStack {
-                //title
+                // Recipe title
                 if (title.count > 31) {
-                    Text(title.prefix(31) + "...") // cut off title if it's too long to fit
+                    Text(title.prefix(31) + "...") // Cut off title if it's too long to fit
                         .font(.system(size: 15))
                 } else {
                     Text(title)
@@ -38,9 +40,9 @@ struct RecipeCard: View {
                 }
                 Spacer()
                 
-                //save button
+                // Button for user to save the recipe
                 Button(action: {
-                    if !self.recipes.contains(where: {$0.name == title && $0.numReviews == reviews}) { // if this recipe is not saved
+                    if !self.recipes.contains(where: {$0.name == title && $0.numReviews == reviews}) { // If this recipe is not saved, save it
                         let newRec = SavedRecipe(context: self.moc)
                         newRec.id = UUID()
                         newRec.name = title
@@ -52,12 +54,14 @@ struct RecipeCard: View {
                         newRec.priority = (self.recipes.map{$0.priority}.max() ?? 0)+1
                     }
                     else {
+                        // Otherwise set the priority to 0, unsaving it
                         let rec = self.recipes.first(where: {$0.name == title && $0.numReviews == reviews})!
                         rec.priority = 0
                     }
                     try? self.moc.save()
                 }, label: {
-                    if recipes.contains(where: {$0.name == title && $0.numReviews == reviews && $0.priority > 0}) { // if it is  saved
+                    // Label button with a filled in bookmark if saved, otherwise unfilled 
+                    if recipes.contains(where: {$0.name == title && $0.numReviews == reviews && $0.priority > 0}) {
                         Image(systemName: "bookmark.fill")
                     }
                     else {
@@ -66,6 +70,7 @@ struct RecipeCard: View {
                 })
                 .buttonStyle(BorderlessButtonStyle())
                 
+                // Button that links to the recipe's actual website
                 Image(systemName: "link").padding(.horizontal,10).onTapGesture {
                     self.showSafari = true
                 }
@@ -75,10 +80,11 @@ struct RecipeCard: View {
                 }
             }
             
+            
             HStack {
-                Stars(rating: rating)
+                Stars(rating: rating) // Images of stars representing how highly rated the recipe is
                 Spacer()
-                Text("\(reviews) Ratings")
+                Text("\(reviews) Ratings") // Displays the number of ratings that this recipe has received
                     .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.3))
             }
             .padding(5)
@@ -92,6 +98,8 @@ struct RecipeCard: View {
     }
 }
 
+
+// ViewController to open the Safari page of recipes
 struct SafariView: UIViewControllerRepresentable {
 
     let url: URL

@@ -8,12 +8,14 @@
 
 import SwiftUI
 
+// Displays all custom foods user has created, allows for deleting
 struct CustomFoods: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(entity: Food.entity(), sortDescriptors: []) var foods: FetchedResults<Food>
+    @FetchRequest(entity: Food.entity(), sortDescriptors: []) var foods: FetchedResults<Food> // Gets list of Foods from core data
     
     var body: some View {
         List {
+            // Lists each custom food that they created
             ForEach (foods.filter({$0.isCustom}), id: \.id) { food in
                 HStack {
                     Text(food.name ?? "Unknown")
